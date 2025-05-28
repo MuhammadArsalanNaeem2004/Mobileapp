@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mobile Brand & Model Filter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
+      <h1 class="text-xl font-semibold mb-4 text-center">
+        Mobile Brand & Model Filter
+      </h1>
+
+      <div class="mb-4">
+        <label for="brandSelect" class="block mb-1 font-medium"
+          >Select Brand</label
+        >
+        <select id="brandSelect" class="w-full border rounded px-3 py-2">
+          <option value="">-- Choose Brand --</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="modelSelect" class="block mb-1 font-medium"
+          >Select Model</label
+        >
+        <select
+          id="modelSelect"
+          class="w-full border rounded px-3 py-2"
+          disabled
+        >
+          <option value="">-- Choose Model --</option>
+        </select>
+      </div>
+
+      <button
+        id="searchBtn"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded"
+        disabled
+      >
+        Search
+      </button>
+
+      <div
+        id="result"
+        class="mt-6 p-4 bg-green-100 text-green-900 rounded hidden"
+      ></div>
+    </div>
+
+    <script>
+      const mobiles = {
+        iphone: {
+          iphone7: { modelName: "iphone7" },
+          iphone7plus: { modelName: "iphone7plus" },
+          iphone8: { modelName: "iphone8" },
+          iphone8plus: { modelName: "iphone8plus" },
+          iphoneX: { modelName: "iphoneX" },
+          iphoneXR: { modelName: "iphoneXR" },
+          iphone11: { modelName: "iphone11" },
+          iphone12: { modelName: "iphone12" },
+          iphone13: { modelName: "iphone13" },
+          iphone14: { modelName: "iphone14" },
+          iphone15: { modelName: "iphone15" },
+        },
+        xiaomi: {
+          Mi12Pro: { modelName: "Mi 12 Pro" },
+          Mi11Lite: { modelName: "Mi 11 Lite" },
+          RedmiNote11Pro: { modelName: "Redmi Note 11 Pro" },
+          PocoX3: { modelName: "Poco X3" },
+          PocoX4: { modelName: "Poco X4" },
+          RedmiNote9: { modelName: "Redmi Note 9" },
+        },
+        realme: {
+          Narzo50: { modelName: "Narzo 50" },
+          Realme8Pro: { modelName: "Realme 8 Pro" },
+          RealmeNarzo30: { modelName: "Realme Narzo 30" },
+          Realme7i: { modelName: "Realme 7i" },
+        },
+        samsung: {
+          GalaxyS23Ultra: { modelName: "Galaxy S23 Ultra" },
+          GalaxyS24Ultra: { modelName: "Galaxy S24 Ultra" },
+          GalaxyZFold5: { modelName: "Galaxy Z Fold5" },
+        },
+      };
+
+      const brandSelect = document.getElementById("brandSelect");
+      const modelSelect = document.getElementById("modelSelect");
+      const searchBtn = document.getElementById("searchBtn");
+      const resultDiv = document.getElementById("result");
+
+      function populateBrands() {
+        for (const brand in mobiles) {
+          const option = document.createElement("option");
+          option.value = brand;
+          option.textContent = brand.charAt(0).toUpperCase() + brand.slice(1);
+          brandSelect.appendChild(option);
+        }
+      }
+      function populateModels(brand) {
+        modelSelect.innerHTML = '<option value="">-- Choose Model --</option>';
+        if (!brand || !mobiles[brand]) {
+          modelSelect.disabled = true;
+          searchBtn.disabled = true;
+          return;
+        }
+
+        const models = mobiles[brand];
+        for (const modelKey in models) {
+          const option = document.createElement("option");
+          option.value = modelKey;
+          option.textContent = models[modelKey].modelName || modelKey;
+          modelSelect.appendChild(option);
+        }
+        modelSelect.disabled = false;
+        searchBtn.disabled = true;
+      }
+      brandSelect.addEventListener("change", () => {
+        const brand = brandSelect.value;
+        populateModels(brand);
+        resultDiv.classList.add("hidden");
+      });
+
+      modelSelect.addEventListener("change", () => {
+        searchBtn.disabled = !modelSelect.value;
+        resultDiv.classList.add("hidden");
+      });
+
+      searchBtn.addEventListener("click", () => {
+        const brand = brandSelect.value;
+        const modelKey = modelSelect.value;
+        if (!brand || !modelKey) return;
+
+        const brandName = brand.charAt(0).toUpperCase() + brand.slice(1);
+        const modelName = mobiles[brand][modelKey].modelName || modelKey;
+
+        resultDiv.textContent = `You selected: Brand - ${brandName}, Model - ${modelName}`;
+        resultDiv.classList.remove("hidden");
+      });
+      populateBrands();
+    </script>
+  </body>
+</html>
